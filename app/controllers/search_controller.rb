@@ -1,9 +1,9 @@
 class SearchController < ApplicationController
     def search
         if params[:q].nil?
-            @articles = []
+            @profiles = []
         else
-            @articles = Profile.search params[:q]
+            @profiles = Profile.search params[:q]
         end
     end
 end

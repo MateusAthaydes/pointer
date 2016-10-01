@@ -1,0 +1,13 @@
+<h1>Todos os Perfis</h1>
+<%= link_to 'Search', controller: "search", action: "search" %>
+<br>
+<div>
+    <ul>
+        <% @profiles.each do |profile| %>
+        <li>
+            <h3><%= profile.nome %></h3>
+            <p><%= profile.descricao %></p>
+        </li>
+        <% end %>
+    </ul>
+</div>

@@ -35,15 +35,23 @@ def self.search(query)
         query: {
             multi_match: {
                 query: query,
-                fields: ['titleˆ10', 'text']
-            }
+                fields: ['nomeˆ10',
+                    'descricaoˆ10',
+                    'producoes_bibliograficas',
+                    'formacoes_academicas',
+                    'formacao_complementar',
+                    'areas_atuacao',
+                    'projeto_pesquisa',
+                    'orientados',
+                    'premios',
+                    'idiomas']}
         },
         highlight: {
             pre_tags: ['<em>'],
             post_tags: ['</em>'],
             fields: {
-            title: {},
-            text: {}
+            nome: {},
+            descricao: {}
             }
         }
     })
