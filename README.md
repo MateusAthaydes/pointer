@@ -1,24 +1,21 @@
-# README
+# Rails Pointer
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Trabalho TCC
 
-Things you may want to cover:
+Dependências:
+* Ruby
+* elasticsearch
+* Mongodb
 
-* Ruby version
+Este trabalho usa o elasticsearch como fonte de pesquisa, portanto faça o [download dele] e rode o serviço localmente antes de continuar.
+[download dele]: <https://www.elastic.co/guide/en/elasticsearch/reference/current/_installation.html>
 
-* System dependencies
+Foi disponibilisado um arquivo "~/db/seeds/profiles.json" com oito perfis previamente extraidos.
 
-* Configuration
+Para inicializar abra o terminal no diretorio do projeto e execute:
+```bundle install```, para instalar todas as gems necessárias.
 
-* Database creation
+Então, para popular o banco (tanto o mongoid quanto o elasticsearch) utilize o comando:
+```rake db:setup```
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Agora para iniciar o servidor: ```rails s```
