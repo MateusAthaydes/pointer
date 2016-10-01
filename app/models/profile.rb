@@ -46,13 +46,5 @@ def self.search(query)
                     'premios',
                     'idiomas']}
         },
-        highlight: {
-            pre_tags: ['<em>'],
-            post_tags: ['</em>'],
-            fields: {
-            nome: {},
-            descricao: {}
-            }
-        }
     })
 end

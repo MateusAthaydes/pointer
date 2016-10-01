@@ -8,7 +8,7 @@ class FormacaoAcademica
     include Elasticsearch::Model
     include Elasticsearch::Model::Callbacks
 
-    field :orientado, type: String, default: ""
+    field :orientador, type: String, default: ""
     field :data_fim, type: String, default: ""
     field :outros_dados, type: Array, default: ""
     field :data_inicio, type: String, default: ""

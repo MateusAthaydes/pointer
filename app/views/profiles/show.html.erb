@@ -1,0 +1,25 @@
+<div style="width:70%; margin:auto">
+    <h1><%= @profile.nome %></h1>
+    <div>
+        <h3>Descrição</h3>
+        <hr>
+        <p><%= @profile.descricao %></p>
+    </div>
+    <br>
+    <div>
+        <h3>Formação Academica</h3>
+        <hr>
+        <p>
+            <% @profile.formacao_academica.each do |formacao| %>
+            <div>
+                <p>
+                    <h4><%= formacao.titulo %></h4>
+                    <i><%= formacao.instituicao %></i>
+                    <br>
+                    <span><strong>Período:</strong><%= formacao.data_inicio %> - <%= formacao.data_fim %></span>
+                </p>
+            </div>
+            <% end %>
+        </p>
+    </div>
+</div>

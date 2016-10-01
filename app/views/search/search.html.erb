@@ -12,16 +12,8 @@
   <% @profiles.each do |profile| %>
     <li>
       <h3>
-        <%= link_to profile.try(:highlight).try(:nome) ? profile.highlight.title[0].html_safe : profile.nome,
-          controller: "profiles",
-          action: "show",
-          id: profile._id%>
+        <%= link_to profile.nome, controller: "profiles", action: "show", id: profile._id%>
       </h3>
-      <% if profile.try(:highlight).try(:descricao) %>
-        <% profile.highlight.descricao.each do |snippet| %>
-          <p><%= snippet.html_safe %>...</p>
-        <% end %>
-      <% end %>
     </li>
   <% end %>
 </ul>
