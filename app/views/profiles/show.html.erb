@@ -1,4 +1,4 @@
-<div style="width:70%; margin:auto">
+<div class="centered-wrapper">
     <h1><%= @profile.nome %></h1>
     <div>
         <h3>Descrição</h3>
@@ -6,20 +6,164 @@
         <p><%= @profile.descricao %></p>
     </div>
     <br>
-    <div>
-        <h3>Formação Academica</h3>
-        <hr>
-        <p>
-            <% @profile.formacao_academica.each do |formacao| %>
-            <div>
-                <p>
-                    <h4><%= formacao.titulo %></h4>
-                    <i><%= formacao.instituicao %></i>
-                    <br>
-                    <span><strong>Período:</strong><%= formacao.data_inicio %> - <%= formacao.data_fim %></span>
-                </p>
-            </div>
-            <% end %>
-        </p>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Formação Academica</h3>
+            <hr>
+            <p>
+                <% if @profile.formacao_academica.each do |formacao| %>
+                <div>
+                    <p>
+                        <h4><%= formacao.titulo %></h4>
+                        <i><%= formacao.instituicao %></i>
+                        <br>
+                        <span><strong>Período:</strong><%= formacao.data_inicio %> - <%= formacao.data_fim %></span>
+                    </p>
+                </div>
+                <% end.empty? %>
+                <div class="empty">
+                    <%= @profile.nome %> <b>não tem</b> nenhuma formação acadêmica cadastrada.
+                </div>
+                <% end %>
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h3>Formação Complementar</h3>
+            <hr>
+            <p>
+                <% if  @profile.formacao_complementar.each do |formacao| %>
+                <div>
+                    <p>
+                        <h4><%= formacao.formacao %></h4>
+                        <span><strong>Período:</strong><%= formacao.inicio %> - <%= formacao.fim %></span>
+                    </p>
+                </div>
+                <% end.empty? %>
+                <div class="empty">
+                    <%= @profile.nome %> <b>não tem</b> nenhuma formação complementar cadastrada.
+                </div>
+                <% end %>
+            </p>
+        </div>
     </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Áreas de Atuação</h3>
+            <hr>
+            <p>
+                <% if @profile.area_atuacao.each do |area| %>
+                <div>
+                    <p>
+                        <h4><%= area.grande_area %>: <%= area.area %></h4>
+                        <span><strong>Sub-área: </strong><%= area.sub_area %></span>
+                        <br>
+                        <span><strong>Especialidade: </strong><%= area.especialidade %></span>
+                    </p>
+                </div>
+                <% end.empty? %>
+                <div class="empty">
+                    <%= @profile.nome %> <b>não tem</b> nenhuma area de atuação cadastrada.
+                </div>
+                <% end %>
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h3>Orientados</h3>
+            <hr>
+            <p>
+                <% if @profile.orientados.each do |orientacao| %>
+                <div>
+                    <p>
+                        <h4><%= orientacao['nome'] %></h4>
+                        <span><strong>Descrição: </strong><%= orientacao['descricao'] %></span>
+                    </p>
+                </div>
+                <% end.empty? %>
+                <div class="empty">
+                    <%= @profile.nome %> <b>não tem</b> nenhuma orientação cadastrada.
+                </div>
+                <% end %>
+            </p>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Idiomas</h3>
+            <hr>
+            <p>
+                <% if @profile.idioma.each do |idioma| %>
+                <div>
+                    <p>
+                        <h4><%= idioma.idioma %></h4>
+                        <span><strong>Nível: </strong><%= idioma.nivel %></span>
+                    </p>
+                </div>
+                <% end.empty? %>
+                <div class="empty">
+                    <%= @profile.nome %> <b>não tem</b> nenhum idioma cadastrada.
+                </div>
+                <% end %>
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h3>Prêmios</h3>
+            <hr>
+            <p>
+                <% if @profile.premio.each do |premio| %>
+                <div>
+                    <p>
+                        <h4><%= premio.premio %></h4>
+                        <span><%= premio.ano %></span>
+                    </p>
+                </div>
+                <% end.empty? %>
+                <div class="empty">
+                    <%= @profile.nome %> <b>não tem</b> nenhuma orientação cadastrada.
+                </div>
+                <% end %>
+            </p>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Produções Bibliograficas</h3>
+            <hr>
+            <p>
+                <% if  @profile.producoes_bibliograficas.each do |producao| %>
+                <div>
+                    <p>
+                        <span><%= producao %></span>
+                    </p>
+                </div>
+                <% end.empty? %>
+                <div class="empty">
+                    <%= @profile.nome %> <b>não tem</b> nenhuma produção bibliográfica cadastrada.
+                </div>
+                <% end %>
+            </p>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Projetos de pesquisa</h3>
+            <hr>
+            <p>
+                <% if  @profile.projeto_pesquisa.each do |projeto| %>
+                <div>
+                    <p>
+                        <h4><%= projeto.inicio %> - <%= projeto.fim %></h4>
+                        <span><%= projeto.pesquisa %></span>
+                    </p>
+                </div>
+                <% end.empty? %>
+                <div class="empty">
+                    <%= @profile.nome %> <b>não tem</b> nenhum projeto de pesquisa cadastrada.
+                </div>
+                <% end %>
+            </p>
+        </div>
 </div>

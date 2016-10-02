@@ -1,0 +1,23 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+.centered-wrapper{
+    width: 70%; 
+    margin: auto;
+    h1{
+        text-align: center;
+    }
+
+    .profile-sarch{
+        .search-form{
+            width: 100%;
+            input {
+                width: 100%;
+            }
+        }
+        .search-result{
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+    }
+}

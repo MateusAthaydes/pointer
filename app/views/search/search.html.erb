@@ -1,20 +1,33 @@
-<h1>Profiles Search</h1>
-
-<%= form_for search_path, method: :get do |f| %>
-  <p>
-    <%= f.label "Search for" %>
-    <%= text_field_tag :q, params[:q] %>
-    <%= submit_tag "Go", name: nil %>
-  </p>
-<% end %>
-
-<ul>
-  <% @profiles.each do |profile| %>
-    <li>
-      <h3>
-        <%= link_to profile.nome, controller: "profiles", action: "show", id: profile._id%>
-      </h3>
-    </li>
-  <% end %>
-</ul>
-<%= link_to '<- todos perfis', profiles_path %>
+<div class="centered-wrapper">
+  <h1>Pesquisa de Perfis</h1>
+  <hr>
+  <div class="profile-search">
+    <%= form_for search_path, :html => {:class => "form-inline, search-form"}, method: :get do |f| %>
+      <div class="form-group">
+        <div class="col-sm-11">
+          <%= text_field_tag :q, params[:q], class: "form-control" %>
+        </div>
+        <div class="col-sm-1">
+          <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i></button>
+        </div>
+      </div>
+    <% end %>
+    <br>
+    <br>
+    <br>
+    <div class="search-result">
+      <ul>
+        <% @profiles.each do |profile| %>
+          <li>
+            <h5>
+              <%= link_to profile.nome, controller: "profiles", action: "show", id: profile._id%>
+            </h5>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <br>
+    <br>
+    <%= link_to '<- todos perfis', profiles_path %>
+  </div>
+  </div>
