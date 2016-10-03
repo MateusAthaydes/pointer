@@ -9,6 +9,16 @@
   </head>
 
   <body>
-    <%= yield %>
+    <header class="pointer-header">
+      <div class="centered-wrapper">
+        <span><strong>Pointer</strong></span>
+        &nbsp;&nbsp;
+        <span><strong><%= link_to 'Todos Perfis', profiles_path %></strong></span>
+        &nbsp;&nbsp;
+        <span><strong><%= link_to 'Pesquisar', controller: "search", action: "search" %></strong></span>
+      </div>
+    </header>
+    <content><%= yield %></content>
+    <footer></footer>
   </body>
 </html>

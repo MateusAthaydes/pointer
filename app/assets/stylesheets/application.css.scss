@@ -1,11 +1,19 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+.pointer-header{
+    font-size: large;
+}
+
 .centered-wrapper{
     width: 70%; 
     margin: auto;
-    h1{
+    h1 {
         text-align: center;
+    }
+    .ranking_pessoal{
+        text-align: center;
+        font-size: medium;
     }
 
     .profile-sarch{

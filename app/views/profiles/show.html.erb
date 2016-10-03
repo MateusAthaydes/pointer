@@ -1,5 +1,6 @@
 <div class="centered-wrapper">
     <h1><%= @profile.nome %></h1>
+    <p class="ranking_pessoal"><i>Ranking Perfil: <%= @profile.ranking_pessoal %></i></p>
     <div>
         <h3>Descrição</h3>
         <hr>
@@ -17,7 +18,7 @@
                         <h4><%= formacao.titulo %></h4>
                         <i><%= formacao.instituicao %></i>
                         <br>
-                        <span><strong>Período:</strong><%= formacao.data_inicio %> - <%= formacao.data_fim %></span>
+                        <span><strong>Período:&nbsp;</strong><%= formacao.data_inicio %> - <%= formacao.data_fim %></span>
                     </p>
                 </div>
                 <% end.empty? %>
@@ -72,7 +73,7 @@
             <h3>Orientados</h3>
             <hr>
             <p>
-                <% if @profile.orientados.each do |orientacao| %>
+                <% if @profile.orientacao.each do |orientacao| %>
                 <div>
                     <p>
                         <h4><%= orientacao['nome'] %></h4>
@@ -120,7 +121,7 @@
                 </div>
                 <% end.empty? %>
                 <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhuma orientação cadastrada.
+                    <%= @profile.nome %> <b>não tem</b> nenhum premio cadastrado.
                 </div>
                 <% end %>
             </p>
@@ -161,7 +162,7 @@
                 </div>
                 <% end.empty? %>
                 <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhum projeto de pesquisa cadastrada.
+                    <%= @profile.nome %> <b>não tem</b> nenhum projeto de pesquisa cadastrado.
                 </div>
                 <% end %>
             </p>
