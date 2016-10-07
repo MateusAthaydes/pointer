@@ -107,24 +107,28 @@ class Profile
             return 0
         end
     end
-end
 
-def self.search(query)
-    __elasticsearch__.search({
-        query: {
-            multi_match: {
-                query: query,
-                fields: ['nomeˆ10',
-                    'descricaoˆ10',
-                    'producoes_bibliograficas',
-                    'formacao_academicas',
-                    'formacao_complementar',
-                    'areas_atuacao',
-                    'projeto_pesquisa',
-                    'orientados',
-                    'premios',
-                    'idiomas']
+    def self.search_by(query)
+        __elasticsearch__.search({
+            sort: [ 
+                {'ranking_pessoal': {"order": "desc"}},
+                '_score', 
+            ],
+            query: {
+                multi_match: {
+                    query: query,
+                    fields: ['nomeˆ10',
+                        'descricaoˆ10',
+                        'producoes_bibliograficas',
+                        'formacao_academicas',
+                        'formacao_complementar',
+                        'areas_atuacao',
+                        'projeto_pesquisa',
+                        'orientados',
+                        'premios',
+                        'idiomas'],
+                }
             }
-        },
-    })
+        })
+    end
 end

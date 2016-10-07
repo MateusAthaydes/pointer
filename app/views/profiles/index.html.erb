@@ -4,7 +4,7 @@
     <div>
         <% @profiles.each do |profile| %>
         <div>
-            <h3><%= link_to profile.nome, controller: "profiles", action: "show", id: profile._id%></h3>
+            <h3><%= link_to profile.nome, controller: "profiles", action: "show", id: profile._id %></h3>
             <p><%= profile.descricao %></p>
         </div>
         <hr>

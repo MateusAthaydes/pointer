@@ -3,7 +3,7 @@ class SearchController < ApplicationController
         if params[:q].nil?
             @profiles = []
         else
-            @profiles = Profile.search params[:q]
+            @profiles = Profile.search_by params[:q]
         end
     end
 end

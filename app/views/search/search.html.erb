@@ -20,7 +20,7 @@
         <% @profiles.each do |profile| %>
           <li>
             <h5>
-              <%= link_to profile.nome, controller: "profiles", action: "show", id: profile._id%>
+              <%= link_to profile.nome, controller: "profiles", action: "show", id: profile._id%> - (RP: <%= profile.ranking_pessoal %>)
             </h5>
           </li>
         <% end %>
