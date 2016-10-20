@@ -3,6 +3,7 @@ require 'elasticsearch/dsl'
 require 'mongoid'
 require 'Date'
 require 'set'
+require 'i18n'
 Mongoid.connect_to 'profiles'
 
 class Profile
@@ -34,38 +35,78 @@ class Profile
     end
 
     set_callback(:save, :before) do |document|
-        document.nome_citacoes = document.create_nome_citacoes
-
-        personal_ranking_value = document.calculate_personal_ranking
-        document.ranking_pessoal = personal_ranking_value
+        document.nome_citacoes = document.create_researcher_quotation
+        document.ranking_pessoal = document.calculate_personal_ranking
     end
 
-    def create_nome_citacoes
-      # MÓRA, M. C.;MORA, M.C.;Móra, Michael da Costa;Mora, Michael da Costa
+    set_callback(:save, :after) do |document|
+      # The relation ranking should be calculated after the save, to garantee
+      # that all profiles already have their personal ranking calculated
+      document.ranking_relacoes = calculate_relationship_ranking
+    end
+
+    ##
+    # Create a list of possible quotes for the researcher
+    # This is necessary as long as we use escavador as data source
+    ##
+    def create_researcher_quotation
       nome_citacoes = Array.new
+      initials = []
+      self.clean_name_string! self.nome
+      nome_list = cleaned_name.split ' '
+      nome_list.each{|n| initials << n[0]}
 
-      # MICHAEL DA COSTA MORA
-      nome_citacoes.append(self.nome.upcase!)
+      initials_first_index = 0
+      initials_last_index = initials.length - 1
+      nome_list_last_index = nome_list.length - 1
 
-      nome_list = self.nome.split " "
-      last_name = nome_list.pop + ","
+      # 1. MICHAEL DA COSTA MORA
+      citacao = self.nome.upcase
+      nome_citacoes << citacao
 
-      # MORA, MICHAEL DA COSTA
-      citacao = last_name + nome_list.join(' ')
-      nome_citacoes.append(citacao)
+      # 2. MICHAEL C. M.
+      citacao = nome_list.first + ' ' + initials.list_without_element(initials_first_index).join('. ') + '.'
+      nome_citacoes << citacao
 
-      # MORA, M. C.
-      citacao = last_name
-      nome_list.each do |nome|
-        citacao += nome + "."
-      end
-      nome_citacoes.append(citacao)
+      # 3. MICHAEL C. MORA
+      citacao = nome_list.first + ' ' + initials.list_without_list_of_elements([initials_first_index, initials_last_index]).join('. ') + '. ' + nome_list.last
+      nome_citacoes << citacao
+
+      # 4. M. C, MORA
+      citacao = initials.list_without_element(initials_last_index).join('. ') + ', ' + nome_list.last
+      nome_citacoes << citacao
+
+      # 5. MORA, MICHAEL DA COSTA
+      rest_of_name = nome_list.list_without_element(nome_list_last_index)
+      last_name_formatted = nome_list.list_without_list_of_elements((0..(rest_of_name.length - 1))).join('') + ', '
+
+      citacao = last_name_formatted + ', ' + rest_of_name.join(' ')
+      nome_citacoes << citacao
+
+      # 6. MORA, M. C.
+      citacao = last_name_formatted + initials.list_without_element(initials_last_index).join('. ') + '.'
+      nome_citacoes << citacao
+
       return nome_citacoes
     end
 
+    ##
+    # Trasnform the name into upcase
+    # Remove accents
+    # Remove 'da, do, de' and that kind of stuff from the name of the researcher
+    ##
+    def clean_name_string(name)
+      cleaned_name = name.upcase
+      cleaned_name = I18n.transliterate(cleaned_name)
+      # remove 'da, do, de' do nome (nao servem para nada em termos de citacoes)
+      cleaned_name = cleaned_name[/\b[\w]{1,2}\b/]
+      # to make a trim: .gsub!(/\s+/, "")
+      return cleaned_name
+    end
+
     #
-    ## O ranking pessoal é dado por:
-    ## Média ponderada de:
+    ## Basically, the personal ranking is:
+    ## weighted average of:
     ## (AR) Tempo em atividade recente - peso 3
     ## (XP) Tempo de experiência - peso 1
     ## (NA) Número de artigos - peso 4
@@ -97,6 +138,13 @@ class Profile
       producoes = self.get_relations_of_producoes_bibliograficas
 
       relations = orientados | projetos | producoes
+      relashionship_ranking = 0.0
+
+      relations.each do |relation|
+        relationship_ranking += relation.ranking_pessoal
+      end
+
+      return relashionship_ranking
     end
 
     protected
@@ -164,9 +212,6 @@ class Profile
         relation = Profile.find_by(:nome => orientacao.nome)
         if relation
           orientados.add(relation)
-        else
-          # Chama o servico python pra inserir a partir de orientacao.link
-          # Adiciona na lista de orientados
         end
       end
       return orientados_relations
@@ -182,9 +227,6 @@ class Profile
           relation = Profile.find_by(:nome => integrante_name)
           if relation
             relations.add(relation)
-          else
-            # Chama o servico python pra inserir a partir de orientacao.link
-            # Adiciona na lista de orientados
           end
         end
       end
@@ -194,18 +236,21 @@ class Profile
     protected
     def get_relations_of_producoes_bibliograficas
       relations = Set.new
-      sef.producoes_bibliograficas.each do |producao|
+      self.producoes_bibliograficas.each do |producao|
         collaborators = proucao.split(/\ \. /).first.split(/ ; /)
         collaborators.each do |collaborator|
-          collaborator.gsub!(/\s+/, "")
+          collaborator_quotation = self.clean_name(collaborator)
           # ver se assinatura está em algum profile
-          Profile.find_by(:nome_citacoes => )
-          relations.add()
+          relation = Profile.find_by(:nome_citacoes => collaborator_quotation)
+          relations.add(relation)
         end
       end
       return relations
     end
 
+    ##
+    # Elasticsearch search query method
+    ##
     def self.search_by(query)
       result = __elasticsearch__.search({
             sort: [
@@ -214,8 +259,8 @@ class Profile
             query: {
                 multi_match: {
                     query: query,
-                    fields: ['nomeˆ10',
-                        'descricaoˆ10',
+                    fields: ['nome^10',
+                        'descricao^10',
                         'producoes_bibliograficas',
                         'formacao_academicas',
                         'formacao_complementar',
@@ -230,4 +275,27 @@ class Profile
         })
         return result
     end
+end
+
+class Array
+  ##
+  # Get the actual list and removes the element given by parameter(The parameter must be the element index).
+  # This method doesnt modify the original list, it returns a copy of that without the element
+  ##
+  def list_without_element(element_index)
+      self_cloned = self.clone
+      self_cloned.delete_at element_index
+      return self_cloned
+  end
+
+  ##
+  # Do the same as the list_without_element, but accepting a list of elements
+  ##
+  def list_without_list_of_elements(list_of_index_elements)
+    self_cloned = self.clone
+    list_of_index_elements.sort.reverse.each do |element_index|
+      self_cloned.delete_at element_index
+    end
+    return self_cloned
+  end
 end
