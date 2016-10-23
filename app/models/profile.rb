@@ -20,7 +20,9 @@ class Profile
     field :descricao, type: String, default: ''
     field :producoes_bibliograficas, type: Array, default: []
     field :ranking_pessoal, type: Float, default: 0.0
-    field :nome_citacoes, type: Array, default []
+    field :ranking_relacoes, type: Float, default: 0.0
+    field :lista_relacoes, type: Array, default:[]
+    field :nome_citacoes, type: Array, default: []
 
     embeds_many :orientacao, store_as: :orientados
     embeds_many :projeto_pesquisa, store_as: :projeto_pesquisa
@@ -34,15 +36,30 @@ class Profile
         as_json(except: [:id, :_id])
     end
 
-    set_callback(:save, :before) do |document|
+    set_callback(:create, :before) do |document|
         document.nome_citacoes = document.create_researcher_quotation
         document.ranking_pessoal = document.calculate_personal_ranking
+        document.lista_relacoes = document.get_relations
+        document.ranking_relacoes = document.calculate_relationship_ranking
     end
 
-    set_callback(:save, :after) do |document|
-      # The relation ranking should be calculated after the save, to garantee
-      # that all profiles already have their personal ranking calculated
-      document.ranking_relacoes = calculate_relationship_ranking
+    set_callback(:create, :after) do |document|
+      document.update_relations_ranking
+    end
+
+
+    def update_relations_ranking
+      self.lista_relacoes.each do |relation_id|
+        relation = Profile.find_by(:id => relation_id)
+        if relation
+          unless relation.lista_relacoes.include? self.id
+            relation.lista_relacoes << self.id
+          end
+
+          relation.ranking_relacoes = relation.calculate_relationship_ranking
+          relation.save
+        end
+      end
     end
 
     ##
@@ -52,7 +69,7 @@ class Profile
     def create_researcher_quotation
       nome_citacoes = Array.new
       initials = []
-      self.clean_name_string! self.nome
+      cleaned_name = self.clean_name self.nome
       nome_list = cleaned_name.split ' '
       nome_list.each{|n| initials << n[0]}
 
@@ -62,30 +79,38 @@ class Profile
 
       # 1. MICHAEL DA COSTA MORA
       citacao = self.nome.upcase
-      nome_citacoes << citacao
+      nome_citacoes << citacao.gsub(/\s+/, '')
 
       # 2. MICHAEL C. M.
       citacao = nome_list.first + ' ' + initials.list_without_element(initials_first_index).join('. ') + '.'
-      nome_citacoes << citacao
+      nome_citacoes << citacao.gsub(/\s+/, '')
 
       # 3. MICHAEL C. MORA
       citacao = nome_list.first + ' ' + initials.list_without_list_of_elements([initials_first_index, initials_last_index]).join('. ') + '. ' + nome_list.last
-      nome_citacoes << citacao
+      nome_citacoes << citacao.gsub(/\s+/, '')
 
       # 4. M. C, MORA
       citacao = initials.list_without_element(initials_last_index).join('. ') + ', ' + nome_list.last
-      nome_citacoes << citacao
+      nome_citacoes << citacao.gsub(/\s+/, '')
 
-      # 5. MORA, MICHAEL DA COSTA
+      # 5. MORA, MICHAEL COSTA
       rest_of_name = nome_list.list_without_element(nome_list_last_index)
       last_name_formatted = nome_list.list_without_list_of_elements((0..(rest_of_name.length - 1))).join('') + ', '
+      citacao = last_name_formatted + rest_of_name.join(' ')
+      nome_citacoes << citacao.gsub(/\s+/, '')
 
-      citacao = last_name_formatted + ', ' + rest_of_name.join(' ')
-      nome_citacoes << citacao
+      # 6. MORA, MICHAEL DA COSTA
+      full_name_list = I18n.transliterate(self.nome).upcase.split(' ')
+      full_name_list_last_index = full_name_list.length - 1
+      rest_of_name = full_name_list.list_without_element(full_name_list_last_index)
+      # last_name_formatted = full_name_list.list_without_list_of_elements((0..(rest_of_name.length - 1))).join('')
+      citacao = last_name_formatted + rest_of_name.join(' ')
+      nome_citacoes << citacao.gsub(/\s+/, '')
 
-      # 6. MORA, M. C.
+
+      # 7. MORA, M. C.
       citacao = last_name_formatted + initials.list_without_element(initials_last_index).join('. ') + '.'
-      nome_citacoes << citacao
+      nome_citacoes << citacao.gsub(/\s+/, '')
 
       return nome_citacoes
     end
@@ -95,11 +120,11 @@ class Profile
     # Remove accents
     # Remove 'da, do, de' and that kind of stuff from the name of the researcher
     ##
-    def clean_name_string(name)
-      cleaned_name = name.upcase
-      cleaned_name = I18n.transliterate(cleaned_name)
+    def clean_name(name)
+      cleaned_name = I18n.transliterate(name)
+      cleaned_name = cleaned_name.upcase
       # remove 'da, do, de' do nome (nao servem para nada em termos de citacoes)
-      cleaned_name = cleaned_name[/\b[\w]{1,2}\b/]
+      cleaned_name = cleaned_name.sub(/ \b[\w]{1,2}\b /, ' ')
       # to make a trim: .gsub!(/\s+/, "")
       return cleaned_name
     end
@@ -125,26 +150,32 @@ class Profile
     ## O ranking de relacoes se trata do somatorio do ranking pessoal de cada um
     ## dos perfis os quais o perfil atual se relaciona.
     #
-    def calculate_relationship_ranking
+    def get_relations
       # Descobrir as relacoes:
         # Orientados
         # Projetos de Pesquisa
         # Producoes Bibliograficas
-        # Formacao academica?
       # Consultar o RP de cada uma
       # Somar os RPs e retornar
       orientados = self.get_relations_of_orientados
       projetos = self.get_relations_of_projetos_pesquisa
       producoes = self.get_relations_of_producoes_bibliograficas
 
-      relations = orientados | projetos | producoes
-      relashionship_ranking = 0.0
+      relations = (orientados | projetos | producoes).delete self.id
+      return relations.to_a
+    end
 
-      relations.each do |relation|
-        relationship_ranking += relation.ranking_pessoal
+    def calculate_relationship_ranking
+      relationship_ranking = 0.0
+
+      self.lista_relacoes.each do |relation_id|
+        relation = Profile.find_by(:id => relation_id)
+        if relation
+          relationship_ranking += relation.ranking_pessoal
+        end
       end
 
-      return relashionship_ranking
+      return relationship_ranking
     end
 
     protected
@@ -168,12 +199,11 @@ class Profile
     protected
     def get_tempo_experiencia
         this_year = Date.today.year
-        experience_years_count = 0
         last_experience_year = this_year
         self.formacao_academica.each do |formacao|
             if formacao.data_fim != 'Atual'
                 if formacao.data_fim.to_i < last_experience_year.to_i
-                    last_experiece_year = formacao.data_fim.to_i
+                    last_experience_year = formacao.data_fim.to_i
                 end
             else
                 if formacao.data_inicio.to_i < last_experience_year.to_i
@@ -211,22 +241,22 @@ class Profile
       self.orientacao.each do |orientacao|
         relation = Profile.find_by(:nome => orientacao.nome)
         if relation
-          orientados.add(relation)
+          orientados.add(relation._id)
         end
       end
-      return orientados_relations
+      return orientados
     end
 
     protected
     def get_relations_of_projetos_pesquisa
       relations = Set.new
       self.projeto_pesquisa.each do |projeto|
-        integrantes = projeto.pesquisa[/Integrantes: .*\./].slice!('Integrantes: ')
+        integrantes = projeto.pesquisa[/Integrantes: .*\./].slice!('Integrantes: ').split(' / ')
         integrantes.each do |integrante|
           integrante_name = integrante.slice(/ - .*$/)
           relation = Profile.find_by(:nome => integrante_name)
           if relation
-            relations.add(relation)
+            relations.add(relation._id)
           end
         end
       end
@@ -237,12 +267,14 @@ class Profile
     def get_relations_of_producoes_bibliograficas
       relations = Set.new
       self.producoes_bibliograficas.each do |producao|
-        collaborators = proucao.split(/\ \. /).first.split(/ ; /)
+        collaborators = producao.split(" . ").first.split(" ; ")
         collaborators.each do |collaborator|
-          collaborator_quotation = self.clean_name(collaborator)
+          collaborator_quotation = self.clean_name(collaborator).gsub(/\s+/, "")
           # ver se assinatura está em algum profile
           relation = Profile.find_by(:nome_citacoes => collaborator_quotation)
-          relations.add(relation)
+          if relation
+            relations.add(relation._id)
+          end
         end
       end
       return relations
@@ -259,8 +291,8 @@ class Profile
             query: {
                 multi_match: {
                     query: query,
-                    fields: ['nome^10',
-                        'descricao^10',
+                    fields: ['nome',
+                        'descricao',
                         'producoes_bibliograficas',
                         'formacao_academicas',
                         'formacao_complementar',
