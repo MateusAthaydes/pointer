@@ -293,8 +293,8 @@ class Profile
             query: {
                 multi_match: {
                     query: query,
-                    fields: ['nome',
-                        'descricao',
+                    fields: ['nome^10',
+                        'descricao^10',
                         'producoes_bibliograficas',
                         'formacao_academicas',
                         'formacao_complementar',
