@@ -1,170 +1,203 @@
-<div class="centered-wrapper">
-    <h1><%= @profile.nome %></h1>
-    <p class="ranking_pessoal"><i>Ranking Perfil: <%= @profile.ranking_pessoal %></i></p>
-    <div>
-        <h3>Descrição</h3>
-        <hr>
-        <p><%= @profile.descricao %></p>
+<div class="ui internally celled grid container">
+  <div class="ui huge header row">
+    <br><%= @profile.nome %>
+  </div>
+  <p class="ranking_pessoal"><i>Ranking Perfil: <%= @profile.ranking_pessoal %></i></p>
+  <div class="ui segment" style="width: 100%">
+    <h3>Descrição</h3>
+    <p><%= @profile.descricao %></p>
+  </div>
+  <br>
+  <!--   Formacoes   -->
+  <div class="ui horizontal segments" style="width: 100%;">
+    <div class="ui segment" style="min-width: 50%;">
+      <h3>Formação Academica</h3>
+      <p>
+      <div class="ui items">
+        <% if @profile.formacao_academica.each do |formacao| %>
+            <div class="item">
+              <div class="content">
+                <div class="ui small header"><%= formacao.titulo %>
+                  <div class="ui small label"><%= formacao.data_inicio %> - <%= formacao.data_fim %></div>
+                </div>
+                <div class="meta"><%= formacao.instituicao %></div>
+              </div>
+            </div>
+        <% end.empty? %>
+            <div class="item">
+              <div class="content">
+                <div class="description"><%= @profile.nome %> <b>não possui</b> nenhuma formação acadêmica cadastrada.</div>
+              </div>
+            </div>
+        <% end %>
+      </div>
+      </p>
     </div>
-    <br>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Formação Academica</h3>
-            <hr>
-            <p>
-                <% if @profile.formacao_academica.each do |formacao| %>
-                <div>
-                    <p>
-                        <h4><%= formacao.titulo %></h4>
-                        <i><%= formacao.instituicao %></i>
-                        <br>
-                        <span><strong>Período:&nbsp;</strong><%= formacao.data_inicio %> - <%= formacao.data_fim %></span>
-                    </p>
+    <div class="ui segment">
+      <h3>Formação Complementar</h3>
+      <p>
+      <div class="ui items">
+        <% if  @profile.formacao_complementar.each do |formacao| %>
+            <div class="item">
+              <div class="content">
+                <div class="description"><%= formacao.formacao %>
+                  <div class="ui tiny label"><%= formacao.inicio %> - <%= formacao.fim %></div>
                 </div>
-                <% end.empty? %>
-                <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhuma formação acadêmica cadastrada.
-                </div>
-                <% end %>
-            </p>
-        </div>
-        <div class="col-md-6">
-            <h3>Formação Complementar</h3>
-            <hr>
-            <p>
-                <% if  @profile.formacao_complementar.each do |formacao| %>
-                <div>
-                    <p>
-                        <h4><%= formacao.formacao %></h4>
-                        <span><strong>Período:</strong><%= formacao.inicio %> - <%= formacao.fim %></span>
-                    </p>
-                </div>
-                <% end.empty? %>
-                <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhuma formação complementar cadastrada.
-                </div>
-                <% end %>
-            </p>
-        </div>
+              </div>
+            </div>
+        <% end.empty? %>
+            <div class="item">
+              <div class="content">
+                <div class="description"><%= @profile.nome %> <b>não possui</b> nenhuma formação complementar cadastrada.</div>
+              </div>
+            </div>
+        <% end %>
+      </div>
+      </p>
     </div>
-    <br>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Áreas de Atuação</h3>
-            <hr>
-            <p>
-                <% if @profile.area_atuacao.each do |area| %>
-                <div>
-                    <p>
-                        <h4><%= area.grande_area %>: <%= area.area %></h4>
-                        <span><strong>Sub-área: </strong><%= area.sub_area %></span>
-                        <br>
-                        <span><strong>Especialidade: </strong><%= area.especialidade %></span>
-                    </p>
-                </div>
-                <% end.empty? %>
-                <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhuma area de atuação cadastrada.
-                </div>
-                <% end %>
-            </p>
-        </div>
-        <div class="col-md-6">
-            <h3>Orientados</h3>
-            <hr>
-            <p>
-                <% if @profile.orientacao.each do |orientacao| %>
-                <div>
-                    <p>
-                        <h4><%= orientacao['nome'] %></h4>
-                        <span><strong>Descrição: </strong><%= orientacao['descricao'] %></span>
-                    </p>
-                </div>
-                <% end.empty? %>
-                <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhuma orientação cadastrada.
-                </div>
-                <% end %>
-            </p>
-        </div>
+  </div>
+  <!--   Areas Atuacao   -->
+  <div class="ui segment" style="width: 100%">
+    <h3 class="">Áreas de Atuação</h3>
+    <div class="ui stackable equal width divided grid">
+      <div class="ui items two column row">
+        <% if @profile.area_atuacao.each do |area| %>
+            <div class="item column">
+              <div class="content">
+                <p>
+                <div class="ui small header"><%= area.grande_area %></div>
+                <div class="meta"><strong>Sub-área: </strong><%= area.sub_area %></div>
+                <div class="meta"><strong>Especialidade: </strong><%= area.especialidade %></div>
+                </p>
+              </div>
+            </div>
+        <% end.empty? %>
+            <div class="item column">
+              <div class="content">
+                <div class="description"><%= @profile.nome %> <b>não possui</b> nenhuma formação complementar cadastrada.</div>
+              </div>
+            </div>
+        <% end %>
+      </div>
     </div>
-    <br>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Idiomas</h3>
-            <hr>
-            <p>
-                <% if @profile.idioma.each do |idioma| %>
-                <div>
-                    <p>
-                        <h4><%= idioma.idioma %></h4>
-                        <span><strong>Nível: </strong><%= idioma.nivel %></span>
-                    </p>
-                </div>
-                <% end.empty? %>
-                <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhum idioma cadastrada.
-                </div>
-                <% end %>
-            </p>
-        </div>
-        <div class="col-md-6">
-            <h3>Prêmios</h3>
-            <hr>
-            <p>
-                <% if @profile.premio.each do |premio| %>
-                <div>
-                    <p>
-                        <h4><%= premio.premio %></h4>
-                        <span><%= premio.ano %></span>
-                    </p>
-                </div>
-                <% end.empty? %>
-                <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhum premio cadastrado.
-                </div>
-                <% end %>
-            </p>
-        </div>
+  </div>
+  <!--Idiomas e Premios-->
+  <div class="ui horizontal segments" style="min-width: 100%;">
+    <div class="ui segment" style="width: 50%;">
+      <h3>Idiomas</h3>
+      <p>
+      <div class="ui items">
+        <% if @profile.idioma.each do |idioma| %>
+            <div class="item">
+              <div class="content">
+                <div class="ui small header"><%= idioma.idioma %></div>
+                <div class="meta"><%= idioma.nivel %></div>
+              </div>
+            </div>
+        <% end.empty? %>
+            <div class="item">
+              <div class="content">
+                <div class="description"><%= @profile.nome %> <b>não possui</b> nenhum idioma cadastrado.</div>
+              </div>
+            </div>
+        <% end %>
+      </div>
+      </p>
     </div>
-    <br>
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Produções Bibliograficas</h3>
-            <hr>
-            <p>
-                <% if  @profile.producoes_bibliograficas.each do |producao| %>
-                <div>
-                    <p>
-                        <span><%= producao %></span>
-                    </p>
-                </div>
-                <% end.empty? %>
-                <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhuma produção bibliográfica cadastrada.
-                </div>
-                <% end %>
-            </p>
-        </div>
+    <div class="ui segment" style="width: 50%;">
+      <h3>Premios</h3>
+      <p>
+      <div class="ui divided items">
+        <% if @profile.premio.each do |premio| %>
+            <div class="item">
+              <div class="content">
+                <div class="description"><%= premio.premio %> <span class="ui tiny label yellow"><%= premio.ano %></span></div>
+              </div>
+            </div>
+        <% end.empty? %>
+            <div class="item">
+              <div class="content">
+                <div class="description"><%= @profile.nome %> <b>não possui</b> nenhum premio cadastrado.</div>
+              </div>
+            </div>
+        <% end %>
+      </div>
+      </p>
     </div>
-    <br>
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Projetos de pesquisa</h3>
-            <hr>
-            <p>
-                <% if  @profile.projeto_pesquisa.each do |projeto| %>
-                <div>
-                    <p>
-                        <h4><%= projeto.inicio %> - <%= projeto.fim %></h4>
-                        <span><%= projeto.pesquisa %></span>
-                    </p>
+  </div>
+  <!--           Orientados-->
+  <div class="ui segment" style="width: 100%">
+    <div class="ui fluid accordion">
+      <div class="title">
+        <div class="ui medium header"><i class="dropdown icon"></i>Orientados</div>
+      </div>
+      <div class="content">
+        <div class="ui divided items">
+          <% if @profile.orientacao.each do |orientacao| %>
+              <div class="item">
+                <div class="content">
+                  <div class="ui sub header"><%= orientacao['nome'] %></div>
+                  <div class="meta"><%= orientacao['descricao'] %></div>
                 </div>
-                <% end.empty? %>
-                <div class="empty">
-                    <%= @profile.nome %> <b>não tem</b> nenhum projeto de pesquisa cadastrado.
+              </div>
+          <% end.empty? %>
+              <div class="item">
+                <div class="content">
+                  <div class="description"><%= @profile.nome %> <b>não possui</b> nenhuma orientação cadastrada.</div>
                 </div>
-                <% end %>
-            </p>
+              </div>
+          <% end %>
         </div>
+      </div>
+      <div class="ui fitted divider"></div>
+      <!--                Produções Bibliograficas-->
+      <div class="title">
+        <div class="ui medium header"><i class="dropdown icon"></i>Produções Bibliograficas</div>
+      </div>
+      <div class="content">
+        <div class="ui divided items">
+          <% if  @profile.producoes_bibliograficas.each do |producao| %>
+              <div class="item">
+                <div class="content">
+                  <div class="description"><%= producao %></div>
+                </div>
+              </div>
+          <% end.empty? %>
+              <div class="item">
+                <div class="content">
+                  <div class="description"><%= @profile.nome %> <b>não possui</b> nenhuma produção bibliográfica cadastrada.</div>
+                </div>
+              </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="ui fitted divider"></div>
+      <!--                Projetos de Pesquisa-->
+      <div class="title">
+        <div class="ui medium header"><i class="dropdown icon"></i>Projetos de Pesquisa</div>
+      </div>
+      <div class="content">
+        <div class="ui divided items">
+          <% if  @profile.projeto_pesquisa.each do |projeto| %>
+              <div class="item">
+                <div class="content">
+                  <div class="description"><%= projeto.pesquisa %> <span class="ui tiny label"><%= projeto.inicio %> - <%= projeto.fim %></span></div>
+                </div>
+              </div>
+          <% end.empty? %>
+              <div class="item">
+                <div class="content">
+                  <div class="description"><%= @profile.nome %> <b>não possui</b> nenhum projeto de pesquisa cadastrado.</div>
+                </div>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      $('.ui.accordion')
+          .accordion();
+    </script>
+  </div>
+  <!--   End Container   -->
 </div>
