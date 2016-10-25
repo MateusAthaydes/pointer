@@ -1,0 +1,62 @@
+<html>
+
+<head>
+  <title>PointerSE - A search engine for scholars</title>
+  <%= csrf_meta_tags %>
+  <link href="https://fonts.googleapis.com/css?family=Lobster|Raleway" rel="stylesheet">
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+</head>
+
+
+<body>
+<div class="ui divided stackable mobile reversed equal height grid" style="min-height: 100%;">
+  <!-- LEFT COLUMN -->
+  <main class="ui ten wide column grid middle aligned padded">
+    <div class="ui grid container">
+      <div class="twelve wide large screen sixteen wide column centered">
+        <h2>Search for a scholar</h2>
+        <%= form_tag({controller: "search", action: "search"}, method: "get", class: "form-inline, search-form") do %>
+            <div class="ui huge fluid action input">
+              <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search..." %>
+              <button class="ui button blue" type="submit">Search</button>
+            </div>
+            <div class="ui right aligned container">
+              <p>Advanced Search</p>
+            </div>
+        <% end %>
+        <div class="ui horizontal divider">
+          Or
+        </div>
+        <h2>Log in</h2>
+        <div class="ui equal width form">
+          <div class="fields">
+            <div class="field">
+              <label>Username</label>
+              <input type="text" placeholder="Username">
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password">
+            </div>
+          </div>
+          <button class="fluid ui button blue">Log in</button>
+        </div>
+        <div class="ui container left aligned">
+          <p>Don't have an account? Sign in!</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!--RIGHT COLUMN-->
+  <aside class="ui six wide column grey right floated row">
+    <div class="column middle aligned">
+      <%= image_tag("logo.png", class: "ui tiny centered image") %>
+      <h1 class="ui center aligned header inverted" style="font-family: 'Lobster', cursive; font-size: 4em;">Pointer SE</h1>
+      <p class="ui center aligned container">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore atque facere animi minus repudiandae sit suscipit magni ex ipsam, sint repellat cumque quidem nam veritatis error fugiat nostrum at, praesentium!</p>
+    </div>
+  </aside>
+</div>
+</body>
+
+</html>

@@ -1,31 +1,34 @@
-<div class="centered-wrapper">
-  <h1>Pesquisa de Perfis</h1>
-  <hr>
-  <div class="profile-search">
+<!--SEARCH-->
+<div class="ui grid" style="flex: 1;">
+  <div class="ui container centered">
+    <h1 class="ui center aligned header" style="font-family: 'Lobster', cursive; font-size: 4em; margin: 10% 0 3%;">
+      <%= image_tag("logo.png", class: "ui small image") %>
+      Pointer SE</h1>
     <%= form_for search_path, :html => {:class => "form-inline, search-form"}, method: :get do |f| %>
-      <div class="form-group">
-        <div class="col-sm-11">
-          <%= text_field_tag :q, params[:q], class: "form-control" %>
+        <div class="ui huge fluid action input">
+          <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search..." %>
+          <div class="ui button blue">Search</div>
         </div>
-        <div class="col-sm-1">
-          <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i></button>
+        <div class="ui right aligned container">
+          <p>Advanced Search</p>
         </div>
-      </div>
     <% end %>
-    <br>
-    <br>
-    <br>
-    <div class="search-result">
-      <ul>
-        <% @profiles.each do |profile| %>
-          <li>
-            <h5>
-              <%= link_to profile.nome, controller: "profiles", action: "show", id: profile._id%> - (RP: <%= profile.ranking_pessoal %>)
-            </h5>
-          </li>
-        <% end %>
-      </ul>
+
+    <div class="ui relaxed items">
+      <% @profiles.each do |profile| %>
+          <div class="ui section divider"></div>
+          <div class="item">
+            <div class="content">
+              <%= link_to profile.nome, {controller: "profiles", action: "show", id: profile._id}, class: "header"%>
+              <div class="meta">
+                RP: <%= profile.ranking_pessoal %>
+              </div>
+              <div class="description">
+                <p><%= profile.descricao %></p>
+              </div>
+            </div>
+          </div>
+      <% end %>
     </div>
-    <br>
   </div>
-  </div>
+</div>
