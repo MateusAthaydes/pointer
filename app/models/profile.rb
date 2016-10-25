@@ -103,12 +103,14 @@ class Profile
       full_name_list = I18n.transliterate(self.nome).upcase.split(' ')
       full_name_list_last_index = full_name_list.length - 1
       rest_of_name = full_name_list.list_without_element(full_name_list_last_index)
-      # last_name_formatted = full_name_list.list_without_list_of_elements((0..(rest_of_name.length - 1))).join('')
       citacao = last_name_formatted + rest_of_name.join(' ')
       nome_citacoes << citacao.gsub(/\s+/, '')
 
+      # 7. MORA, MICHAEL C.
+      citacao = last_name_formatted + rest_of_name.list_without_element(rest_of_name.length - 1).join('') + initials.list_without_list_of_elements([initials_first_index, initials_last_index]).join('. ') + '.'
+      nome_citacoes << citacao.gsub(/\s+/, '')
 
-      # 7. MORA, M. C.
+      # 8. MORA, M. C.
       citacao = last_name_formatted + initials.list_without_element(initials_last_index).join('. ') + '.'
       nome_citacoes << citacao.gsub(/\s+/, '')
 
@@ -125,7 +127,7 @@ class Profile
       cleaned_name = cleaned_name.upcase
       # remove 'da, do, de' do nome (nao servem para nada em termos de citacoes)
       cleaned_name = cleaned_name.sub(/ \b[\w]{1,2}\b /, ' ')
-      # to make a trim: .gsub!(/\s+/, "")
+      # to make a trim: .gsub!(/\s+/, ""  )
       return cleaned_name
     end
 
