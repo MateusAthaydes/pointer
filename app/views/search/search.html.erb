@@ -21,7 +21,7 @@
             <div class="content">
               <%= link_to profile.nome, {controller: "profiles", action: "show", id: profile._id}, class: "header"%>
               <div class="meta">
-                RP: <%= profile.ranking_pessoal %>
+                RP: <%= profile.ranking_pessoal %> | RR: <%= profile.ranking_relacoes %>
               </div>
               <div class="description">
                 <p><%= profile.descricao %></p>

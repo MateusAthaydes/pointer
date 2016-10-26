@@ -4,6 +4,7 @@ require 'mongoid'
 require 'Date'
 require 'set'
 require 'i18n'
+require_relative 'ranking/search_result'
 Mongoid.connect_to 'profiles'
 
 class Profile
@@ -286,10 +287,10 @@ class Profile
     # Elasticsearch search query method
     ##
     def self.search_by(query)
-      result = __elasticsearch__.search({
-            sort: [
-                {'ranking_pessoal': {"order": "desc"}}
-            ],
+      elasticsearch_result = __elasticsearch__.search({
+            # sort: [
+            #     {'ranking_pessoal': {"order": "desc"}}
+            # ],
             query: {
                 multi_match: {
                     query: query,
@@ -307,7 +308,11 @@ class Profile
                 }
             }
         })
-        return result
+
+        search_result = SearchResult.new(query,elasticsearch_result)
+        search_result.say_hello
+
+        return elasticsearch_result
     end
 end
 
