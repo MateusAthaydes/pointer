@@ -61,7 +61,6 @@ class ProfileTermRanking
   end
 
   ##
-  # TODO
   # Publications_section has a separated method
   ##
   def calculate_term_distance_for_publications_section
@@ -74,28 +73,56 @@ class ProfileTermRanking
       mp_op * SECTION_WEIGHTS['OP'] + mp_pp * SECTION_WEIGHTS['PP'])/10
   end
 
-  ##
-  # TODO
-  ##
   def calctulate_pub_term_for_publications_section
+    mp_publications_section_total = 0.0
+    @profile.producoes_bibliograficas.each do |producao|
+      pub_year_weight = 0
+      pub_year = producao[/, \b[0-9]{4}\b\./]
+      if pub_year
+          pub_year = pub_year[/[0-9]{4}/].to_i
+          pub_year_weight = self.get_weight_by_date pub_year
+      end
+      term_distance = calculate_term_distance producao
+      mp_publications_section_total += term_distance + pub_year_weight
+    end
+    return mp_publications_section_total / @profile.producoes_bibliograficas.length
   end
 
-  ##
-  # TODO
-  ##
   def calctulate_pub_term_for_oriented_section
+    mp_oriented_section_total = 0.0
+    @profile.orientacao.each do |orientacao|
+      pub_year_weight = 0
+      pub_year = orientacao.descricao[/; [0-9]{4}\b;/]
+      if pub_year
+        pub_year = pub_year[/[0-9]{4}/].to_i
+        pub_year_weight = self.get_weight_by_date pub_year
+      end
+      term_distance = calculate_term_distance orientacao.descricao
+      mp_oriented_section_total += term_distance + pub_year_weight
+    end
+    return mp_oriented_section_total / @profile.orientacao.length
   end
 
   ##
-  # TODO
+  # TODO este campo nao existe no profile ainda.
   ##
   def calculate_pub_term_for_other_productions_section
+    mp_other_productions_total = 0.0
+    return mp_other_productions_total
   end
 
-  ##
-  # TODO
-  ##
   def calculate_pub_term_for_research_projects_section
+    mp_research_projects_total = 0.0
+    @profile.projeto_pesquisa.each do |projeto|
+      pub_year = projeto.inicio
+      if projeto.fim != "Atual"
+        pub_year = projeto.fim
+      end
+      pub_year_weight = self.get_weight_by_date pub_year
+      term_distance = calculate_term_distance projeto.pesquisa
+      mp_research_projects_total += term_distance + pub_year_weight
+    end
+    return mp_oriented_section_total / @profile.projeto_pesquisa.length
   end
 
   ##
