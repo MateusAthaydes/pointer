@@ -2,6 +2,7 @@ require 'Date'
 
 class ProfileTermRanking
 
+  # PESOS: SECOES DO PERFIL
   SECTION_WEIGHTS = {
     'DP' => 3, # DESCRICAO DO PERFIL
     'FR' => 3, # FORMACAO
@@ -36,7 +37,7 @@ class ProfileTermRanking
   def calculate_term_distance_for_description_section
     # para a determinada sessao calcula a distancia dos termos
     puts "calculate_term_distance_for_description_section: #{calculate_term_distance @profile.descricao}"
-    return calculate_term_distance @profile.descricao
+    return calculate_term_distance(@profile.descricao || '')
   end
 
   def calculate_term_distance_for_graduation_section
@@ -44,7 +45,7 @@ class ProfileTermRanking
     @profile.each do |formacao|
       total_formacao_distance = 0.0
       formacao.outros_dados.each do |dado|
-        total_formacao_distance += calculate_term_distance dado
+        total_formacao_distance += calculate_term_distance(dado || '')
       end
       total_graduation_distance += total_formacao_distance
     end
@@ -55,10 +56,10 @@ class ProfileTermRanking
   def calculate_term_distance_for_area_section
     total_area_distance = 0.0
     @profile.areas_atuacao.each do |area|
-      especialidade_distance = calculate_term_distance area.especialidade
-      sub_area_distance = calculate_term_distance area.sub_area
-      grande_area_distance = calculate_term_distance area.grande_area
-      area_distance = calculate_term_distance area.area
+      especialidade_distance = calculate_term_distance(area.especialidade || '')
+      sub_area_distance = calculate_term_distance(area.sub_area || '')
+      grande_area_distance = calculate_term_distance(area.grande_area || '')
+      area_distance = calculate_term_distance(area.area || '')
       total_area_distance += especialidade_distance + sub_area_distance + grande_area_distance + area_distance
     end
     puts "calculate_term_distance_for_area_section: #{total_area_distance}"
@@ -98,7 +99,7 @@ class ProfileTermRanking
             pub_year = pub_year[/[0-9]{4}/].to_i
             pub_year_weight = get_weight_by_date pub_year
         end
-        term_distance = calculate_term_distance producao
+        term_distance = calculate_term_distance(producao || '')
         mp_publications_section_total += term_distance + pub_year_weight
       end
       puts "calctulate_pub_term_for_publications_section: #{mp_publications_section_total / @profile.producoes_bibliograficas.length}"
@@ -118,7 +119,7 @@ class ProfileTermRanking
           pub_year = pub_year[/[0-9]{4}/].to_i
           pub_year_weight = get_weight_by_date pub_year
         end
-        term_distance = calculate_term_distance orientacao.descricao
+        term_distance = calculate_term_distance(orientacao.descricao || '')
         mp_oriented_section_total += term_distance + pub_year_weight
       end
       puts "calctulate_pub_term_for_oriented_section: #{mp_oriented_section_total / @profile.orientados.length}"
@@ -146,7 +147,7 @@ class ProfileTermRanking
           pub_year = projeto.fim
         end
         pub_year_weight = get_weight_by_date pub_year
-        term_distance = calculate_term_distance projeto.pesquisa
+        term_distance = calculate_term_distance(projeto.pesquisa || '')
         mp_research_projects_total += term_distance + pub_year_weight
       end
       puts "calculate_pub_term_for_research_projects_section: #{mp_research_projects_total / @profile.projeto_pesquisa.length}"
@@ -177,7 +178,7 @@ class ProfileTermRanking
     if @terms.length == 1
       np = calculate_unigrams_of section_text
     elsif @terms.length == 2
-      np = calculate_ngrams_of section_text
+      np = calculate_bigrams_of section_text
     elsif @terms.length == 3
       np = calculate_trigrams_of section_text
     end
@@ -204,8 +205,9 @@ class ProfileTermRanking
   private
   def calculate_bigrams_of section_text
     section_text_words = section_text.split(' ')
-    first_word_index = section_text_words.index {|word| word.gsub(/[,.!?;:*(){}'"\[\]#@&%]/, '').upcase == @terms.first.upcase}
-    last_word_index = section_text_words.index {|word| word.gsub(/[,.!?;:*(){}'"\[\]#@&%]/, '').upcase == @terms.last.upcase}
+    # This regex removes all symbols of the string
+    first_word_index = section_text_words.index {|word| word.gsub(/[,.!?;:*(){}'"\[\]#@&%]/, '').upcase == @terms.first.upcase} || -1
+    last_word_index = section_text_words.index {|word| word.gsub(/[,.!?;:*(){}'"\[\]#@&%]/, '').upcase == @terms.last.upcase} || -1
     np = (last_word_index - first_word_index) - 1
     if np >= 0
       return np
