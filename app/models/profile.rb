@@ -309,11 +309,10 @@ class Profile
             }
         })
 
-        search_result = SearchResult.new(query,elasticsearch_result)
-        search_result.say_hello
-
-        return elasticsearch_result
+        search_result = SearchResult.new(query, elasticsearch_result)
+        return search_result.get_search_ordered_result
     end
+
 end
 
 class Array

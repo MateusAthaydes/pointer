@@ -14,19 +14,30 @@ class SearchResult
   end
 
   def get_search_ordered_result
-    @elasticsearch_result.each do |result|
-      profile_term = ProfileTermRanking.new(result, @terms)
-      personal_ranking = result.ranking_pessoal
-      relations_ranking = result.ranking_relacoes
-      term_ranking = profile_term.calculate_term_ranking
-      general_ranking = (personal_ranking * GENERAL_RANKING_WEIGHTS['RP'] + relations_ranking * GENERAL_RANKING_WEIGHTS['RR']
-        + term_ranking * GENERAL_RANKING_WEIGHTS['RT']) / 10
+    @elasticsearch_result.sort_by do |result|
+      # Sort by general_ranking
+      calculate_general_ranking! result
+      result._source.ranking_geral
+    end.reverse!
+  end
 
-      # ver se isso insere um atributo genreal_ranking no profile, ou ao menos no result.
-      result.general_ranking = general_ranking
-    end
-    # Sort by general_ranking
-    @elasticsearch_result.sort! { |result1, result2| result1.general_ranking <=> result2 }
+  def calculate_general_ranking! result
+    puts "\n *******#{result.nome}******** \n"
+    profile_term = ProfileTermRanking.new(result, @terms)
+    personal_ranking = result.ranking_pessoal
+    relations_ranking = result.ranking_relacoes
+    term_ranking = profile_term.calculate_term_ranking
+    general_ranking = (personal_ranking * GENERAL_RANKING_WEIGHTS['RP'] + relations_ranking * GENERAL_RANKING_WEIGHTS['RR'] + term_ranking * GENERAL_RANKING_WEIGHTS['RT']) / 10
+
+    puts "\n\npersonal_ranking: #{personal_ranking}"
+    puts "relations_ranking: #{relations_ranking}"
+    puts "term_ranking: #{term_ranking}"
+
+    puts "\n\nGENERAL RANKING: #{general_ranking}"
+
+    # Added general ranking and term ranking to the profile source, to show in view
+    result._source.ranking_termo = term_ranking
+    result._source.ranking_geral = general_ranking
   end
 
   def say_hello
