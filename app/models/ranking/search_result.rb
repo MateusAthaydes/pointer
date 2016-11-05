@@ -14,7 +14,7 @@ class SearchResult
   end
 
   def get_search_ordered_result
-    @elasticsearch_result.sort_by do |result|
+    @elasticsearch_result.to_a.sort_by do |result|
       # Sort by general_ranking
       calculate_general_ranking! result
       result._source.ranking_geral

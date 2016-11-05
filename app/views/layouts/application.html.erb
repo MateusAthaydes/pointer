@@ -4,6 +4,7 @@
   <title>PointerSE - A search engine for scholars</title>
   <%= csrf_meta_tags %>
   <link href="https://fonts.googleapis.com/css?family=Lobster|Raleway" rel="stylesheet">
+  <%= favicon_link_tag 'logo.png' %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
 </head>
@@ -17,7 +18,7 @@ TOP MENU
   <div class="ui fixed grey inverted borderless large menu grid">
     <div class="ui container">
       <div class="">
-        <a href="#" class="header item">
+        <a href="/" class="header item">
           PointerSE
         </a>
       </div>

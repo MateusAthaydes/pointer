@@ -294,6 +294,7 @@ class Profile
             query: {
                 multi_match: {
                     query: query,
+                    operator: 'and',
                     fields: ['nome^10',
                         'descricao^10',
                         'producoes_bibliograficas',
@@ -312,7 +313,6 @@ class Profile
         search_result = SearchResult.new(query, elasticsearch_result)
         return search_result.get_search_ordered_result
     end
-
 end
 
 class Array

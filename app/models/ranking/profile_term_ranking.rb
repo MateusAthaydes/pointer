@@ -91,15 +91,21 @@ class ProfileTermRanking
 
   def calctulate_pub_term_for_publications_section
     mp_publications_section_total = 0.0
+    puts "TERM #{@terms}"
+    puts "PRODUCOES_BIBLIOGRAFICAS #{@profile.producoes_bibliograficas}"
+    puts "DEFINED #{defined? @profile.nome }"
     if defined?(@profile.producoes_bibliograficas)
+      puts "HEY"
       @profile.producoes_bibliograficas.each do |producao|
         pub_year_weight = 0
         pub_year = producao[/, \b[0-9]{4}\b\./]
+        puts "pub_year: #{pub_year}"
         if pub_year
             pub_year = pub_year[/[0-9]{4}/].to_i
             pub_year_weight = get_weight_by_date pub_year
         end
         term_distance = calculate_term_distance(producao || '')
+        puts "term_distance #{term_distance}"
         mp_publications_section_total += term_distance + pub_year_weight
       end
       puts "calctulate_pub_term_for_publications_section: #{mp_publications_section_total / @profile.producoes_bibliograficas.length}"

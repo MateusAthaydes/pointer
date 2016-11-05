@@ -7,7 +7,7 @@
     <%= form_for search_path, :html => {:class => "form-inline, search-form"}, method: :get do |f| %>
         <div class="ui huge fluid action input">
           <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search..." %>
-          <div class="ui button blue">Search</div>
+          <button type="submit" class="ui button blue">Search</button>
         </div>
         <div class="ui right aligned container">
           <p>Advanced Search</p>
