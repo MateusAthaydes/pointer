@@ -36,13 +36,12 @@ class ProfileTermRanking
 
   def calculate_term_distance_for_description_section
     # para a determinada sessao calcula a distancia dos termos
-    puts "calculate_term_distance_for_description_section: #{calculate_term_distance @profile.descricao}"
     return calculate_term_distance(@profile.descricao || '')
   end
 
   def calculate_term_distance_for_graduation_section
     total_graduation_distance = 0.0
-    @profile.each do |formacao|
+    @profile.formacao_academicas.each do |formacao|
       total_formacao_distance = 0.0
       formacao.outros_dados.each do |dado|
         total_formacao_distance += calculate_term_distance(dado || '')
@@ -55,12 +54,14 @@ class ProfileTermRanking
 
   def calculate_term_distance_for_area_section
     total_area_distance = 0.0
-    @profile.areas_atuacao.each do |area|
-      especialidade_distance = calculate_term_distance(area.especialidade || '')
-      sub_area_distance = calculate_term_distance(area.sub_area || '')
-      grande_area_distance = calculate_term_distance(area.grande_area || '')
-      area_distance = calculate_term_distance(area.area || '')
-      total_area_distance += especialidade_distance + sub_area_distance + grande_area_distance + area_distance
+    if @profile.try(:areas_atuacao)
+      @profile.areas_atuacao.each do |area|
+        especialidade_distance = calculate_term_distance(area.especialidade || '')
+        sub_area_distance = calculate_term_distance(area.sub_area || '')
+        grande_area_distance = calculate_term_distance(area.grande_area || '')
+        area_distance = calculate_term_distance(area.area || '')
+        total_area_distance += especialidade_distance + sub_area_distance + grande_area_distance + area_distance
+      end
     end
     puts "calculate_term_distance_for_area_section: #{total_area_distance}"
     return total_area_distance
@@ -91,33 +92,28 @@ class ProfileTermRanking
 
   def calctulate_pub_term_for_publications_section
     mp_publications_section_total = 0.0
-    puts "TERM #{@terms}"
-    puts "PRODUCOES_BIBLIOGRAFICAS #{@profile.producoes_bibliograficas}"
-    puts "DEFINED #{defined? @profile.nome }"
-    if defined?(@profile.producoes_bibliograficas)
-      puts "HEY"
+    if @profile.try(:producoes_bibliograficas)
       @profile.producoes_bibliograficas.each do |producao|
         pub_year_weight = 0
         pub_year = producao[/, \b[0-9]{4}\b\./]
-        puts "pub_year: #{pub_year}"
         if pub_year
             pub_year = pub_year[/[0-9]{4}/].to_i
             pub_year_weight = get_weight_by_date pub_year
         end
         term_distance = calculate_term_distance(producao || '')
-        puts "term_distance #{term_distance}"
         mp_publications_section_total += term_distance + pub_year_weight
       end
-      puts "calctulate_pub_term_for_publications_section: #{mp_publications_section_total / @profile.producoes_bibliograficas.length}"
-      return mp_publications_section_total / @profile.producoes_bibliograficas.length
+      number_of_publications = @profile.producoes_bibliograficas.length == 0 ? 1 : @profile.producoes_bibliograficas.length
+      puts "calctulate_pub_term_for_publications_section: #{mp_publications_section_total / number_of_publications}"
+      return mp_publications_section_total / number_of_publications
     end
-    puts "calctulate_pub_term_for_publications_section: #{mp_publications_section_total}"
+    puts "calctulate_pub_term_for_publications_section: EMPTY"
     return mp_publications_section_total
   end
 
   def calctulate_pub_term_for_oriented_section
     mp_oriented_section_total = 0.0
-    if defined?(@profile.orientados)
+    if @profile.try(:orientados)
       @profile.orientados.each do |orientacao|
         pub_year_weight = 0
         pub_year = orientacao.descricao[/; [0-9]{4}\b;/]
@@ -128,10 +124,11 @@ class ProfileTermRanking
         term_distance = calculate_term_distance(orientacao.descricao || '')
         mp_oriented_section_total += term_distance + pub_year_weight
       end
-      puts "calctulate_pub_term_for_oriented_section: #{mp_oriented_section_total / @profile.orientados.length}"
-      return mp_oriented_section_total / @profile.orientados.length
+      number_of_orientados = @profile.orientados.length == 0 ? 1 : @profile.orientados.length
+      puts "calctulate_pub_term_for_oriented_section: #{mp_oriented_section_total / number_of_orientados}"
+      return mp_oriented_section_total / number_of_orientados
     end
-    puts "calctulate_pub_term_for_oriented_section: #{mp_oriented_section_total}"
+    puts "calctulate_pub_term_for_oriented_section: EMPTY"
     return mp_oriented_section_total
   end
 
@@ -146,8 +143,8 @@ class ProfileTermRanking
 
   def calculate_pub_term_for_research_projects_section
     mp_research_projects_total = 0.0
-    if defined?(@profile.projetos_pesquisa)
-      @profile.projetos_pesquisa.each do |projeto|
+    if @profile.try(:projetos_pesquisa)
+      @profile.projeto_pesquisa.each do |projeto|
         pub_year = projeto.inicio
         if projeto.fim != "Atual"
           pub_year = projeto.fim
@@ -156,10 +153,11 @@ class ProfileTermRanking
         term_distance = calculate_term_distance(projeto.pesquisa || '')
         mp_research_projects_total += term_distance + pub_year_weight
       end
-      puts "calculate_pub_term_for_research_projects_section: #{mp_research_projects_total / @profile.projeto_pesquisa.length}"
-      return mp_research_projects_total / @profile.projeto_pesquisa.length
+      number_of_orientados = @profile.projeto_pesquisa.length == 0 ? 1 : @profile.projeto_pesquisa.length
+      puts "calculate_pub_term_for_research_projects_section: #{mp_research_projects_total / number_of_orientados}"
+      return mp_research_projects_total / number_of_orientados
     end
-    puts "calculate_pub_term_for_research_projects_section: #{mp_research_projects_total}"
+    puts "calculate_pub_term_for_research_projects_section: EMPTY"
     return mp_research_projects_total
   end
 
