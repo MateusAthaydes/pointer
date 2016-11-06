@@ -13,6 +13,8 @@ File.readlines('db/seeds/profiles.json').each do |profile_json|
         :idioma => json_line['idiomas'],
         :premio => json_line['premios'],
         :formacao_academica => json_line['formacao_academica'],
-        :formacao_complementar => json_line['formacao_complementar'])
+        :formacao_complementar => json_line['formacao_complementar'],
+        :organizacao_eventos => json_line['organizacao_eventos'],
+        :outras_producoes => json_line['outras_producoes'])
 end
 puts "Done Reading. Everything was inserted into mongoid database and elasticsearch."

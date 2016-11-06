@@ -4,7 +4,7 @@ require 'mongoid'
 require 'Date'
 require 'set'
 require 'i18n'
-require_relative 'ranking/search_result'
+require_relative './ranking/search_result'
 Mongoid.connect_to 'profiles'
 
 class Profile
@@ -24,6 +24,8 @@ class Profile
     field :ranking_relacoes, type: Float, default: 0.0
     field :lista_relacoes, type: Array, default:[]
     field :nome_citacoes, type: Array, default: []
+    field :organizacao_eventos, type: Array, default: []
+    field :outras_producoes, type: Array, default: []
 
     embeds_many :orientacao, store_as: :orientados
     embeds_many :projeto_pesquisa, store_as: :projeto_pesquisa
@@ -141,12 +143,12 @@ class Profile
     ## (GR) Grau de formação - peso 2
     #
     def calculate_personal_ranking
-        atividade_recente = self.get_atividade_recente
-        experiencia = self.get_tempo_experiencia
-        numero_artigos = self.get_numero_artigos
-        grau_formacao = self.get_grau_formacao
+      atividade_recente = self.get_atividade_recente
+      experiencia = self.get_tempo_experiencia
+      numero_artigos = self.get_numero_artigos
+      grau_formacao = self.get_grau_formacao
 
-        return (atividade_recente * 3 + experiencia * 1 + numero_artigos * 4 + grau_formacao * 2) / 10
+      return (atividade_recente * 3 + experiencia * 1 + numero_artigos * 4 + grau_formacao * 2) / 10
     end
 
     #
@@ -186,15 +188,17 @@ class Profile
         this_year = Date.today.year
         three_years_ago = this_year - 3
         actual_publication_count = 0
-        self.producoes_bibliograficas.each do |producao|
-            # Este regex pega o ano de publicação da publicação corrente - (serão sempre 4 digitos seguidos de ponto (e.g. ', 2007.'))
-            pub_year = producao[/, \b[0-9]{4}\b\./]
-            if pub_year
-                pub_year = pub_year[/[0-9]{4}/].to_i
-                if pub_year >= three_years_ago and pub_year <= this_year
-                    actual_publication_count += 1
-                end
-            end
+        if self.try(:producoes_bibliograficas)
+          self.producoes_bibliograficas.each do |producao|
+              # Este regex pega o ano de publicação da publicação corrente - (serão sempre 4 digitos seguidos de ponto (e.g. ', 2007.'))
+              pub_year = producao[/, \b[0-9]{4}\b\./]
+              if pub_year
+                  pub_year = pub_year[/[0-9]{4}/].to_i
+                  if pub_year >= three_years_ago and pub_year <= this_year
+                      actual_publication_count += 1
+                  end
+              end
+          end
         end
         return actual_publication_count
     end
