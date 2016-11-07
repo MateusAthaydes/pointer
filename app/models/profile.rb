@@ -117,6 +117,12 @@ class Profile
       citacao = last_name_formatted + initials.list_without_element(initials_last_index).join('. ') + '.'
       nome_citacoes << citacao.gsub(/\s+/, '')
 
+      # 9. DA COSTA MORA, MICHAEL
+      full_name_list = I18n.transliterate(self.nome).upcase.split(' ')
+      rest_of_name = full_name_list.list_without_element(0)
+      citacao = rest_of_name.join(' ') + ',' + full_name_list.first
+      nome_citacoes << citacao.gsub(/\s+/, '')
+
       return nome_citacoes
     end
 

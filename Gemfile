@@ -30,6 +30,9 @@ gem 'jbuilder', '~> 2.5'
 # gem 'redis', '~> 3.0'
 
 gem 'sprockets', '3.6.3'
+gem 'httparty'
+gem 'json'
+
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

@@ -1,0 +1,55 @@
+<!--SEARCH-->
+<div class="ui grid" style="flex: 1;">
+  <div class="ui container centered">
+    <h2 class="ui center aligned header" style="font-family: 'Lobster', cursive; font-size: 4em; margin: 10% 0 3%;">
+      Importar</h2>
+    <%= form_for search_path, :html => {:class => "form-inline, search-form"}, method: :get do |f| %>
+        <div class="ui huge fluid action input">
+          <%= text_field_tag :import_name, params[:import_name], class: "form-control", placeholder: "Digite o nome de alguém que você deseja importar ao sistema" %>
+          <button type="submit" class="ui button blue">Pesquisar</button>
+        </div>
+    <% end %>
+    <br>
+    <% if @list_of_results.length > 0 %>
+    <h3>
+      Escolha abaixo qual dos resultados é o que melhor se encaixa com o perfil que quer importar:
+    </h3>
+    <div class="ui relaxed items">
+      <% @list_of_results.each do |result| %>
+          <div class="ui section divider"></div>
+          <div class="item">
+            <div class="content">
+              <label>
+                <input type="radio" name="import_profile" value="<%= result['url'] %>"> &nbsp;
+                <%= result['nome'] %>
+              </label>
+              <div class="description">
+                <p><%= result['descricao'] %></p>
+              </div>
+            </div>
+          </div>
+      <% end %>
+    </div>
+    <button type="button" class="ui button blue right floated" id="import_profile_btn">Importar</button>
+    <% end %>
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){
+  $('#import_profile_btn').click(function(){
+    selected_profile = $('[name="import_profile"]:checked').val();
+    if (selected_profile){
+      $.ajax({
+        type: "POST",
+        url: "/parse_and_import/",
+        data: '{"selected_profile": ' + '"' + selected_profile + '"' + '}',
+        success: function(data){
+          alert("Perfil inserido com sucesso!");
+        }
+      });
+    } else {
+      alert("Select a profile.");
+    };
+  });
+});
+</script>
