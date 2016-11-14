@@ -31,7 +31,7 @@ class ProfileTermRanking
     dt_oe = calculate_term_distance_for_events_section
     dt_sp = calculate_term_distance_for_publications_section
 
-    return (dt_dp * SECTION_WEIGHTS['DP'] + dt_fr * SECTION_WEIGHTS['FR'] + dt_aa * SECTION_WEIGHTS['AA'] + dt_oe * SECTION_WEIGHTS['OE'] + dt_sp * SECTION_WEIGHTS['SP'])/26
+    return (dt_dp * SECTION_WEIGHTS['DP'] + dt_fr * SECTION_WEIGHTS['FR'] + dt_aa * SECTION_WEIGHTS['AA'] + dt_oe * SECTION_WEIGHTS['OE'] + dt_sp * SECTION_WEIGHTS['SP'])/0.26
   end
 
   def calculate_term_distance_for_description_section
