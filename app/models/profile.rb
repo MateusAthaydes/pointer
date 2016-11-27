@@ -1,7 +1,7 @@
 require 'elasticsearch/model'
 require 'elasticsearch/dsl'
 require 'mongoid'
-require 'Date'
+# require 'Date'
 require 'set'
 require 'i18n'
 require_relative './ranking/search_result'
