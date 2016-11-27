@@ -4,6 +4,8 @@ production:
             # database: profiles
             uri: <%= ENV['MONGODB_URI'] %>
         options:
+            uri: <%= ENV['MONGODB_URI'] %>
+            database: profiles
             raise_not_found_error: false
 development:
   # Configure available database clients. (required)
@@ -110,6 +112,9 @@ development:
 
   # Configure Mongoid specific options. (optional)
   options:
+    database: profiles
+    hosts:
+        - localhost:27017
     raise_not_found_error: false
     # Includes the root model name in json serialization. (default: false)
     # include_root_in_json: false
