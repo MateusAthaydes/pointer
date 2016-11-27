@@ -23,5 +23,6 @@ module PointerRails
     # -- all .rb files in that directory are automatically loaded.
     config.autoload_paths += %W( #{config.root}/app/models/ranking)
     config.autoload_paths += %W( #{config.root}/app/models/import_engine)
+	config.assets.initialize_on_precompile = false
   end
 end

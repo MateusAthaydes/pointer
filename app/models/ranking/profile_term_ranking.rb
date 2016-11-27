@@ -1,4 +1,4 @@
-require 'Date'
+# require 'Date'
 
 class ProfileTermRanking
 
