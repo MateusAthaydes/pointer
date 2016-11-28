@@ -10,6 +10,9 @@ production:
         user: <%= uri.user %>
         password: <%= uri.password %>
     options:
+        database: <%= uri.path.sub('/','') %>
+        hosts:
+            - <%= uri.host %>:<%= uri.host %>
         raise_not_found_error: false
 <% end %>
 
