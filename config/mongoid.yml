@@ -30,8 +30,7 @@ development:
   # Configure available database clients. (required)
   clients:
     # Defines the default client. (required)
-    # default:
-    options: 
+    default: 
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
       database: profiles
@@ -132,9 +131,6 @@ development:
 
   # Configure Mongoid specific options. (optional)
   options:
-    database: profiles
-    hosts:
-        - localhost:27017
     raise_not_found_error: false
     # Includes the root model name in json serialization. (default: false)
     # include_root_in_json: false
