@@ -2,7 +2,7 @@ production:
   clients:
     default:
       # database: profiles
-      uri: <%= ENV['MONGODB_URI'] %>
+      uri: mongodb://heroku_89nj3336:mc0csgph9t08uugie00d3nn60l@ds111788.mlab.com:11788/heroku_89nj3336
         options:
           raise_not_found_error: false
 development:
