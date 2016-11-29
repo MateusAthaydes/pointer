@@ -15,16 +15,12 @@
 #             - <%= uri.host %>:<%= uri.host %>
 #         raise_not_found_error: false
 # <% end %>
-
 production:
   clients:
     default:
       # database: profiles
       uri: <%= ENV['MONGODB_URI'] %>
         options:
-          database: profiles
-            hosts:
-              - profiles
             raise_not_found_error: false
 development:
   # Configure available database clients. (required)
