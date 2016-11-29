@@ -6,21 +6,25 @@ production:
       # mongodb://heroku_89nj3336:mc0csgph9t08uugie00d3nn60l@ds111788.mlab.com:11788/heroku_89nj3336
       options:
         raise_not_found_error: false
-      hosts:
-        - <%= URI.parse(ENV['MONGODB_URI']).host %>
+
 development:
   # Configure available database clients. (required)
   clients:
     # Defines the default client. (required)
     default: 
+        # database: profiles
+      uri: <%= ENV['MONGODB_URI'] %>
+      # mongodb://heroku_89nj3336:mc0csgph9t08uugie00d3nn60l@ds111788.mlab.com:11788/heroku_89nj3336
+      options:
+        raise_not_found_error: false
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: profiles
+      # database: profiles
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
-      hosts:
-        - localhost:27017
-      options:
+      # hosts:
+      #   - localhost:27017
+      # options:
         # Change the default write concern. (default = { w: 1 })
         # write:
         #   w: 1
@@ -112,8 +116,8 @@ development:
 
 
   # Configure Mongoid specific options. (optional)
-  options:
-    raise_not_found_error: false
+  # options:
+  #   raise_not_found_error: false
     # Includes the root model name in json serialization. (default: false)
     # include_root_in_json: false
 
@@ -142,16 +146,16 @@ development:
     # environment. The Mongoid logger will be set to the Rails logger
     # otherwise.(default: :info)
     # log_level: :info
-test:
-  clients:
-    default:
-      database: pointer_rails_test
-      hosts:
-        - localhost:27017
-      options:
-        read:
-          mode: :primary
-        max_pool_size: 1
+# test:
+#   clients:
+#     default:
+#       database: pointer_rails_test
+#       hosts:
+#         - localhost:27017
+#       options:
+#         read:
+#           mode: :primary
+#         max_pool_size: 1
 # <% if ENV['MONGODB_URI'] %>
 #   <% uri = URI.parse(ENV['MONGODB_URI']) %>
 # production:
