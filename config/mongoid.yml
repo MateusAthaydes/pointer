@@ -1,27 +1,10 @@
-# <% if ENV['MONGODB_URI'] %>
-#   <% uri = URI.parse(ENV['MONGODB_URI']) %>
-# production:
-#   clients:
-#     default:
-#       database: <%= uri.path.sub('/','') %>
-#       hosts:
-#         - <%= uri.host %>:<%= uri.host %>
-#       options:
-#         user: <%= uri.user %>
-#         password: <%= uri.password %>
-#     options:
-#         database: <%= uri.path.sub('/','') %>
-#         hosts:
-#             - <%= uri.host %>:<%= uri.host %>
-#         raise_not_found_error: false
-# <% end %>
 production:
   clients:
     default:
       # database: profiles
       uri: <%= ENV['MONGODB_URI'] %>
         options:
-            raise_not_found_error: false
+          raise_not_found_error: false
 development:
   # Configure available database clients. (required)
   clients:
@@ -166,3 +149,20 @@ test:
         read:
           mode: :primary
         max_pool_size: 1
+# <% if ENV['MONGODB_URI'] %>
+#   <% uri = URI.parse(ENV['MONGODB_URI']) %>
+# production:
+#   clients:
+#     default:
+#       database: <%= uri.path.sub('/','') %>
+#       hosts:
+#         - <%= uri.host %>:<%= uri.host %>
+#       options:
+#         user: <%= uri.user %>
+#         password: <%= uri.password %>
+#     options:
+#         database: <%= uri.path.sub('/','') %>
+#         hosts:
+#             - <%= uri.host %>:<%= uri.host %>
+#         raise_not_found_error: false
+# <% end %>
