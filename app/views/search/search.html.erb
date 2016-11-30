@@ -15,19 +15,30 @@
     <% end %>
 
     <div class="ui relaxed items">
-      <% @profiles.each do |profile| %>
-          <div class="ui section divider"></div>
-          <div class="item">
-            <div class="content">
-              <%= link_to profile.nome, {controller: "profiles", action: "show", id: profile._id}, class: "header"%>
-              <div class="meta">
-                <b>RP:</b> <%= profile.ranking_pessoal %> | <b>RR</b>: <%= profile.ranking_relacoes %> | <b>RT</b>: <%= number_with_precision profile.ranking_termo,:precision => 2 %> | <b>RG</b>: <%= number_with_precision profile.ranking_geral,:precision => 2 %>
-              </div>
-              <div class="description">
-                <p><%= profile.descricao %></p>
+      <% unless @searched && @profiles.empty? %>
+        <% @profiles.each do |profile| %>
+            <div class="ui section divider"></div>
+            <div class="item">
+              <div class="content">
+                <%= link_to profile.nome, {controller: "profiles", action: "show", id: profile._id}, class: "header"%>
+                <div class="meta">
+                  <b>RP:</b> <%= profile.ranking_pessoal %> | <b>RR</b>: <%= profile.ranking_relacoes %> | <b>RT</b>: <%= number_with_precision profile.ranking_termo,:precision => 2 %> | <b>RG</b>: <%= number_with_precision profile.ranking_geral,:precision => 2 %>
+                </div>
+                <div class="description">
+                  <p><%= profile.descricao %></p>
+                </div>
               </div>
             </div>
-          </div>
+        <% end %>
+      <% else %>
+      <div class="ui section divider"></div>
+      <div class="ui warning message">
+        <i class="close icon"></i>
+        <div class="header">
+          Sua pesquisa não trouxe nenhum resultado.
+        </div>
+        Tente pesquisar por outro termo.
+      </div>
       <% end %>
     </div>
   </div>

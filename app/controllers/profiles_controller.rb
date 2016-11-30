@@ -2,7 +2,7 @@ require 'json'
 require './app/models/import_engine/profile_import'
 class ProfilesController < ApplicationController
     def index
-        @profiles = Profile.all
+        @profiles = Profile.order(:nome => 'asc')
     end
 
     def show

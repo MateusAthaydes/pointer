@@ -3,6 +3,7 @@ class SearchController < ApplicationController
         if params[:q].nil?
             @profiles = []
         else
+            @searched = true
             @profiles = Profile.search_by params[:q]
         end
     end
